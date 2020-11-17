@@ -1,7 +1,6 @@
 /* eslint-disable no-await-in-loop */
 const { TextChannel, VoiceChannel, CategoryChannel } = require('discord.js');
 const fs = require('fs');
-const wait = require('wait');
 const NodeRSA = require('node-rsa');
 const { LocaleDb } = require('informa-db.js');
 
@@ -38,7 +37,7 @@ module.exports = {
         .padStart(8, '0')}`,
     );
     const logMessages = [];
-    await tempChannel.send(`${msg.author.toString()}, Let's start your backup process.
+    /* await tempChannel.send(`${msg.author.toString()}, Let's start your backup process.
 Please note that you have to save your backup yourself.
 For now, please confirm that you're in by typing \`Hello\` to get yourself started`);
     try {
@@ -48,11 +47,12 @@ For now, please confirm that you're in by typing \`Hello\` to get yourself start
       );
     } catch (err) {
       tempChannel.send(
-        `${msg.member.toString()} did not reply in time. We will be deleting this channel in 3 seconds`,
+        `${msg.member.toString()} did not reply in time. We will be deleting this channel in 3 \
+seconds`,
       );
       await wait(3000);
       return tempChannel.delete();
-    }
+    } */
     logMessages[0] = await tempChannel.send(
       '`[***] Setting up default structure...`',
     );
