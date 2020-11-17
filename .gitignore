@@ -120,4 +120,4 @@ dist
 all_keys.json
 
 # Dismiss old code
-ignoreme.js
+ignore-me.js
