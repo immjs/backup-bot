@@ -6,7 +6,7 @@
 
 First, save the `[SERVER_ID].pub` file and the desired encrypted json backup.
 
-Then, on your new server, invite Backup Bot and follow the given orders.
+Then, on your new server, invite Backup Bot, make a #commands channel and follow the given orders.
 
 It will ask you to scan a QR code, but it's just to set up the server correctly.
 (Please note, that none of your data is kept).
@@ -16,7 +16,7 @@ All the data is encrypted because **ANYONE IS A THREAT, YOU INCLUDED** *cough co
 Eventually, your server will have done recovering.
 
 # What if I need to change something in the encrypted backup file?
-Just send a DM out to the owner including the change and the reason for the change. (Don't forget to copy paste, username contains Unicode)
+Just send a DM out to me (The bot owner!) including the change and the reason for the change. (Don't forget to copy paste, username contains Unicode)
 
 `ІnfоrМаthеМusіc#8125`
 

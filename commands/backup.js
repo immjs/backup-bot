@@ -1,10 +1,8 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-await-in-loop */
 const { TextChannel, VoiceChannel, CategoryChannel } = require('discord.js');
 const fs = require('fs');
 const NodeRSA = require('node-rsa');
-const { LocaleDb } = require('informa-db.js');
-
-const keys = new LocaleDb({ path: 'all_keys.json' });
 
 const fetchTilNone = async (channel, logMsg) => {
   const sumMessages = [];
@@ -30,29 +28,21 @@ const fetchTilNone = async (channel, logMsg) => {
 
 module.exports = {
   description: 'Starts the backup process',
-  fn: async (msg) => {
+  fn: async (msg, _, __, highlight) => {
     const tempChannel = await msg.guild.channels.create(
       `backup-process-${Math.floor(Math.random() * 0xffffffff)
         .toString(16)
-        .padStart(8, '0')}`,
+        .padStart(8, '0')}`, {
+        permissionOverwrites: [
+          {
+            type: 'role',
+            id: msg.guild.id,
+            deny: ['VIEW_CHANNEL'],
+          },
+        ],
+      },
     );
     const logMessages = [];
-    /* await tempChannel.send(`${msg.author.toString()}, Let's start your backup process.
-Please note that you have to save your backup yourself.
-For now, please confirm that you're in by typing \`Hello\` to get yourself started`);
-    try {
-      await tempChannel.awaitMessages(
-        (v) => v.content.toLowerCase() === 'hello',
-        { max: 1, time: 60000, errors: 'time' },
-      );
-    } catch (err) {
-      tempChannel.send(
-        `${msg.member.toString()} did not reply in time. We will be deleting this channel in 3 \
-seconds`,
-      );
-      await wait(3000);
-      return tempChannel.delete();
-    } */
     logMessages[0] = await tempChannel.send(
       '`[***] Setting up default structure...`',
     );
@@ -205,21 +195,21 @@ seconds`,
       });
     }
     let tempPubKey;
-    if (!keys.value[msg.guild.id]) {
+    if (!highlight.keys.value[msg.guild.id]) {
       logMessages[4] = await tempChannel.send('`[***] Forging key pair...`');
       const key = new NodeRSA({ b: 1024 });
-      keys.value[msg.guild.id] = key.exportKey();
+      highlight.keys.value[msg.guild.id] = key.exportKey();
       tempPubKey = key.exportKey('public');
       logMessages[4].edit('`[OK!] Forging key pair...`');
     } else {
       logMessages[4] = await tempChannel.send('`[***] Retrieving key pair...`');
-      tempPubKey = new NodeRSA(keys.value[msg.guild.id]).exportKey('public');
+      tempPubKey = new NodeRSA(highlight.keys.value[msg.guild.id]).exportKey('public');
       logMessages[4].edit('`[OK!] Retrieving key pair...`');
     }
     fs.writeFileSync(`${msg.guild.id}.pub`, tempPubKey);
     fs.writeFileSync(
       `${tempChannel.name}.json.encrypted`,
-      new NodeRSA(keys.value[msg.guild.id]).encryptPrivate(
+      new NodeRSA(highlight.keys.value[msg.guild.id]).encryptPrivate(
         JSON.stringify(finalJSON),
       ),
     );
@@ -277,9 +267,9 @@ seconds`,
         // Ignore this
       }
     }
-    tempChannel.delete();
     fs.unlinkSync(`${tempChannel.name}.json.encrypted`);
     fs.unlinkSync(`${msg.guild.id}.pub`);
+    tempChannel.delete();
     return 'Aight, got this done!';
   },
   admin: true,
