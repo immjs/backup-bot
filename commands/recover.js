@@ -17,7 +17,7 @@ const sendThenAwaitMsg = async (tempChannel, msgSnd, filter) => {
 
 module.exports = {
   desc: 'Recover from a backup file',
-  fn: async (msg, _, __, highlight) => {
+  fn: async (msg, _, __, highlights) => {
     const tempChannel = await msg.guild.channels.create(
       `recovery-process-${Math.floor(Math.random() * 0xffffffff)
         .toString(16)
@@ -48,7 +48,9 @@ If this delay is not respected, we will delete this channel.`,
     const jsonFile = await sendThenAwaitMsg(
       tempChannel,
       'Please send your `.json.encrypted` file.',
-      (v) => v.author.id === msg.author.id && Array.from(v.attachments).length !== 0,
+      (v) => v.author.id === msg.author.id
+      && Array.from(v.attachments).length !== 0
+      && Array.from(v.attachments.values())[0].name.endsWith('.json.encrypted'),
     );
     if (jsonFile == null) {
       await tempChannel.send('You did not reply in time. We will delete this channel in 3 seconds.');
@@ -72,16 +74,18 @@ If this delay is not respected, we will delete this channel.`,
     }
     let decrypted;
     try {
-      const tempPubKey = new NodeRSA(highlight.keys.value[+keyName]);
+      const tempPubKey = new NodeRSA(highlights.keys.value[keyName.content.replace('.pub', '')]);
+      console.log(tempPubKey);
       decrypted = tempPubKey.decryptPublic(backupContents, 'utf8');
     } catch (err) {
+      console.log(err);
       await tempChannel.send('You provided an invalid filename. We will delete this channel in 3 seconds.');
       await wait(3000);
       await tempChannel.delete();
       await msg.channel.send(`${msg.author.toString()}, You did not reply with a valid filename. The channel was successfully deleted.`);
       return null;
     }
-    console.log(decrypted);
+    console.log({ decrypted });
     return null;
   },
   admin: true,

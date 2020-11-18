@@ -73,7 +73,7 @@ module.exports = {
         maximumMembers: msg.guild.maximumMembers,
         mfaLevel: msg.guild.mfaLevel,
         name: msg.guild.name,
-        owner: msg.guild.owner.user.id,
+        owner: msg.guild.ownerID,
         preferredLocale: msg.guild.preferredLocale,
         region: msg.guild.region,
         splash: msg.guild.splash,
@@ -211,6 +211,7 @@ module.exports = {
       `${tempChannel.name}.json.encrypted`,
       new NodeRSA(highlight.keys.value[msg.guild.id]).encryptPrivate(
         JSON.stringify(finalJSON),
+        'base64',
       ),
     );
     const backupsChannel = msg.guild.channels.cache.some(

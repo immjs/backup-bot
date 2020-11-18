@@ -26,7 +26,7 @@ client.on('message', async (msg) => {
     .split(' ');
   if (command.toLowerCase() in commands) {
     if (commands[command].admin) {
-      if (msg.member.hasPermission('ADMINISTRATOR')) await commands[command].fn(msg, args, client);
+      if (msg.member.hasPermission('ADMINISTRATOR')) await commands[command].fn(msg, args, client, highlights);
       else msg.channel.send('Insufficient permission [Required: `Admin`]');
     } else if (commands[command].owner === 'bot') {
       if (msg.author.id === (await client.fetchApplication()).owner.id) {
@@ -41,7 +41,7 @@ client.on('message', async (msg) => {
         msg.channel.send('Insufficient permision [Required: `Server owner`]');
       }
     } else {
-      await commands[command].fn(msg, args, client);
+      await commands[command].fn(msg, args, client, highlights);
     }
   } else {
     msg.channel.send(`Command ${process.env.PREFIX}${command} not found`);
